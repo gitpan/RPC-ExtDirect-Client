@@ -11,7 +11,7 @@ use RPC::ExtDirect::Client::API;
 
 ### VERSION ###
 
-our $VERSION = '0.2';
+our $VERSION = '0.22';
 
 ### PUBLIC CLASS METHOD (CONSTRUCTOR) ###
 #
@@ -32,11 +32,11 @@ sub new {
     @$self{ @our_params } = delete @params{ @our_params };
 
     # Reasonable defaults
-    $self->{api_path}     //= '/api';
-    $self->{router_path}  //= '/router';
-    $self->{poll_path}    //= '/events';
-    $self->{remoting_var} //= 'Ext.app.REMOTING_API';
-    $self->{polling_var}  //= 'Ext.app.POLLING_API';
+    $self->{api_path}     ||= '/api';
+    $self->{router_path}  ||= '/router';
+    $self->{poll_path}    ||= '/events';
+    $self->{remoting_var} ||= 'Ext.app.REMOTING_API';
+    $self->{polling_var}  ||= 'Ext.app.POLLING_API';
 
     # The rest of parameters apply to transport
     $self->{http_params} = { %params };
@@ -215,7 +215,10 @@ sub _normalize_arg {
         my $len = $self->api->actions($action)->method($method)->len;
 
         @$result = splice @$arg, 0, $len;
-    };
+    }
+    else {
+        $result = $arg;
+    }
 
     return $result;
 }
@@ -256,7 +259,7 @@ sub _call_sync {
     my ($self, $action, $method, $arg, $p) = @_;
 
     my $uri       = $self->_get_uri('router');
-    my $params    = $self->{http_params} // {};
+    my $params    = $self->{http_params} || {};
     my $post_body = $self->_encode_post_body($action, $method, $arg);
 
     @$params{ keys %$p } = values %$p if $p;
@@ -662,6 +665,11 @@ for more detail.
 
 =back
 
+=item get_api
+
+Returns L<RPC::ExtDirect::Client::API> object with Ext.Direct API
+declaration published by the server.
+
 =item call(%params)
 
 Calls Ext.Direct remoting method. Arguments are:
@@ -764,7 +772,7 @@ on this module.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2012 Alexander Tokarev.
+Copyright (c) 2012-2013 Alexander Tokarev.
 
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself. See L<perlartistic>.
