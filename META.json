@@ -1,10 +1,10 @@
 {
    "abstract" : "Ext.Direct client in Perl",
    "author" : [
-      "Alexander Tokarev <tokarev@cpan.org>"
+      "Alex Tokarev <tokarev@cpan.org>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "ExtUtils::MakeMaker version 6.64, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "ExtUtils::MakeMaker version 6.98, CPAN::Meta::Converter version 2.140640",
    "license" : [
       "perl_5"
    ],
@@ -22,7 +22,8 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "RPC::ExtDirect::Server" : "0"
+            "RPC::ExtDirect::Server" : "1.0",
+            "Test::More" : "0"
          }
       },
       "configure" : {
@@ -33,7 +34,7 @@
       "runtime" : {
          "requires" : {
             "HTTP::Tiny" : "0.014",
-            "JSON" : "2.0"
+            "RPC::ExtDirect" : "3.0"
          }
       }
    },
@@ -46,5 +47,5 @@
          "url" : "http://github.com/nohuhu/RPC-ExtDirect-Client"
       }
    },
-   "version" : "0.22"
+   "version" : "1.00"
 }

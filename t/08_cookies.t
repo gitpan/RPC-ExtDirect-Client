@@ -46,18 +46,16 @@ package main;
 
 use strict;
 use warnings;
-no  warnings 'uninitialized';
 
 use Test::More tests => 13;
 
+use RPC::ExtDirect::Test::Util;
+use RPC::ExtDirect::Server::Util;
 use RPC::ExtDirect::Client;
 
-use lib 't/lib';
-use util;
-
-# Port number as parameter means there's server listening elsewhere
-my $port = shift @ARGV || start_server(static_dir => 't/htdocs');
-ok $port, 'Got port';
+# Host/port in @ARGV means there's server listening elsewhere
+my ($host, $port) = maybe_start_server(static_dir => 't/htdocs');
+ok $port, "Got host: $host and port: $port";
 
 my $expected_data = {
     foo => 'bar',
@@ -70,7 +68,7 @@ my $expected_event = {
 };
 
 my $client = RPC::ExtDirect::Client->new(
-    host    => 'localhost',
+    host    => $host,
     port    => $port,
     cookies => $expected_data,
 );
@@ -84,8 +82,8 @@ run_tests(
 );
 
 $client = RPC::ExtDirect::Client->new(
-    host => 'localhost',
-    port => $port,
+    host        => 'localhost',
+    port        => $port,
 );
 
 $expected_data = {
@@ -143,7 +141,7 @@ SKIP: {
     };
 
     $client = RPC::ExtDirect::Client->new(
-        host => 'localhost',
+        host => $host,
         port => $port,
     );
 
@@ -168,11 +166,11 @@ sub run_tests {
     my $data = $client->call(
         action  => 'test',
         method  => 'ordered',
+        arg     => [],
         $cookie_jar ? (cookies => $cookie_jar) : (),
     );
 
-    is_deeply $data, $expected_data, "Ordered with $desc"
-        or diag explain $data;
+    is_deep $data, $expected_data, "Ordered with $desc";
 
     $data = $client->submit(
         action  => 'test',
@@ -180,14 +178,11 @@ sub run_tests {
         $cookie_jar ? (cookies => $cookie_jar) : (),
     );
 
-    is_deeply $data, $expected_data, "Form handler with $desc"
-        or diag explain $data;
+    is_deep $data, $expected_data, "Form handler with $desc";
 
     my $event = $client->poll(
         $cookie_jar ? (cookies => $cookie_jar) : (),
     );
 
-    is_deeply $event, $expected_event, "Poll handler with $desc"
-        or diag explain $data;
+    is_deep $event, $expected_event, "Poll handler with $desc";
 }
-

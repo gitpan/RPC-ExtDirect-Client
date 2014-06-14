@@ -14,22 +14,20 @@ package main;
 
 use strict;
 use warnings;
-no  warnings 'uninitialized';
 
-use Test::More tests => 11;
+use Test::More tests => 9;
 
-use lib 't/lib';
-use util;
+use RPC::ExtDirect::Server::Util;
 
 BEGIN { use_ok 'RPC::ExtDirect::Client' };
 
-# Port number as parameter means there's server listening elsewhere
-my $port = shift @ARGV || start_server(static_dir => 't/htdocs');
-ok $port, 'Got port';
+# Host/port in @ARGV means there's server listening elsewhere
+my ($host, $port) = maybe_start_server(static_dir => 't/htdocs');
+ok $port, "Got host: $host and port: $port";
 
 my $cclass = 'RPC::ExtDirect::Client';
 
-my $client = eval { $cclass->new(host => 'localhost', port => $port) };
+my $client = eval { $cclass->new( host => $host, port => $port,) };
 
 is     $@,      '',      "Didn't die";
 ok     $client,          'Got client object';
@@ -41,17 +39,17 @@ my $data = eval {
     $client->call( action => 'test', method => 'nonexistent' )
 };
 
-is   $@,        '',            "Nonexistent didn't die";
-like ref $data, qr/Exception/, 'Nonexistent result is exception';
-like $data,     qr/not found/, 'Nonexistent description matches';
+my $regex = qr/^Method nonexistent is not found in Action test/;
+
+like $@, $regex, "Nonexistent croaked";
 
 # Try calling method that dies
 
 $data = eval {
-    $client->call( action => 'test', method => 'dies' )
+    $client->call( action => 'test', method => 'dies', arg => [], )
 };
 
-is   $@,        '',             "Method call didn't die";
-like ref $data, qr/Exception/,  'Dying method result is exception';
-like $data,     qr/Whoa/,       'Dying method description matches';
+is   $@,             '',             "Method call didn't die";
+like ref $data,      qr/Exception/,  'Dying method result is exception';
+like $data->message, qr/Whoa/,       'Dying method description matches';
 
