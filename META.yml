@@ -3,8 +3,9 @@ abstract: 'Ext.Direct client in Perl'
 author:
   - 'Alex Tokarev <tokarev@cpan.org>'
 build_requires:
-  RPC::ExtDirect::Server: '1.0'
-  Test::More: '0'
+  ExtUtils::MakeMaker: '0'
+  RPC::ExtDirect::Server: '1.01'
+  Test::More: '0.82'
 configure_requires:
   ExtUtils::MakeMaker: '0'
 dynamic_config: 1
@@ -20,8 +21,9 @@ no_index:
     - inc
 requires:
   HTTP::Tiny: '0.014'
-  RPC::ExtDirect: '3.0'
+  RPC::ExtDirect: '3.01'
+  perl: '5.006'
 resources:
-  bugtracker: http://github.com/nohuhu/RPC-ExtDirect-Client/issues
-  repository: http://github.com/nohuhu/RPC-ExtDirect-Client
-version: '1.00'
+  bugtracker: https://github.com/nohuhu/RPC-ExtDirect-Client/issues
+  repository: https://github.com/nohuhu/RPC-ExtDirect-Client
+version: '1.01'

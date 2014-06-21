@@ -15,6 +15,7 @@ t/062_poll.t
 t/063_poll.t
 t/07_cookie_jar.t
 t/08_cookies.t
+t/lib/RPC/ExtDirect/Client/Test/Util.pm
 t/pod.t
 t/server.pl
 META.yml                                 Module YAML meta-data (added by MakeMaker)
